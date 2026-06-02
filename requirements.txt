@@ -1,0 +1,8 @@
+# AI Risk Knowledge Graph — Python dependencies
+# pip install -r requirements.txt
+
+neo4j>=5.14.0
+stix2>=3.1.0
+taxii2-client>=2.3.0
+requests>=2.31.0
+tenacity>=8.2.3
