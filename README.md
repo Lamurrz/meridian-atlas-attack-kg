@@ -1,4 +1,4 @@
-# AI Risk Knowledge Graph
+# Meridian MITRE Atlas to MITRE Att@ck Knowledge Graph
 
 A knowledge graph system for evaluating AI system exposure to adversarial threats by cross-referencing **MITRE ATLAS** and **MITRE ATT&CK** framework data with an asset inventory and live vulnerability intelligence.
 
