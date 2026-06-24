@@ -124,7 +124,6 @@ MATCH (asset)
 WHERE asset.rescore_needed = true
   AND asset.asset_id IS NOT NULL
 MATCH (actor:ThreatActor)-[u:USES_TECHNIQUE]->(t:Technique)-[tgt:TARGETS]->(asset)
-WHERE u.attribution_confidence IS NOT NULL
 OPTIONAL MATCH (ctrl:MitigationControl)-[m:MITIGATES]->(t)
   WHERE asset.asset_type IN m.asset_type_scope
 WITH asset,
@@ -133,7 +132,7 @@ WITH asset,
      u,
      tgt,
      asset.criticality_multiplier AS crit_mult,
-     u.attribution_confidence * CASE u.frequency
+     coalesce(u.attribution_confidence, 0.5) * CASE coalesce(u.frequency, 'occasional')
        WHEN 'frequent'   THEN 1.0
        WHEN 'occasional' THEN 0.6
        ELSE 0.3 END AS actor_weight,
