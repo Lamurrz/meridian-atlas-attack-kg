@@ -1,0 +1,90 @@
+# ============================================================
+# Dependabot Configuration
+# Author: Lori Murray | github.com/Lamurrz
+# Purpose: Automated dependency update PRs and security patches
+#          across Python packages and GitHub Actions workflows.
+# Docs: https://docs.github.com/en/code-security/dependabot
+# ============================================================
+
+version: 2
+
+updates:
+
+  # ── Python Dependencies ────────────────────────────────────────────────
+  # Monitors requirements.txt, pyproject.toml, Pipfile, setup.py, etc.
+  - package-ecosystem: "pip"
+    directory: "/"                  # Root of the repo; change if your
+                                    # requirements file is in a subfolder
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Los_Angeles"
+
+    # Open no more than 5 PRs at once — keeps your PR queue manageable
+    open-pull-requests-limit: 5
+
+    # Target branch for all dependency update PRs
+    target-branch: "main"
+
+    # Group ALL non-security updates into a single weekly PR
+    # instead of one PR per package — reduces noise significantly
+    groups:
+      python-non-security:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+
+    # Security updates are always opened as individual PRs (GitHub default)
+    # so you can review and merge them independently — do not group these
+
+    # Label PRs for easy filtering in your repo
+    labels:
+      - "dependencies"
+      - "python"
+      - "automated"
+
+    # Prefix commit messages for clean git history
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+
+    # Ignore major version bumps — these often introduce breaking changes
+    # and should be handled manually after testing
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # ── GitHub Actions Workflows ───────────────────────────────────────────
+  # Keeps actions/checkout, github/codeql-action, etc. up to date.
+  # Critical for supply chain security — pinned actions can go stale.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Los_Angeles"
+
+    open-pull-requests-limit: 3
+
+    target-branch: "main"
+
+    # Group all Actions updates into one weekly PR
+    groups:
+      github-actions-updates:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+
+    commit-message:
+      prefix: "ci"
+      include: "scope"

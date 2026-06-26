@@ -1,0 +1,85 @@
+# ============================================================
+# CodeQL Security Analysis Workflow
+# Author: Lori Murray | github.com/Lamurrz
+# Purpose: Automated static analysis for security vulnerabilities
+#          on every push, PR, and weekly scheduled scan.
+# ============================================================
+
+name: "CodeQL Security Analysis"
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  schedule:
+    # Runs every Monday at 08:00 UTC — catches newly disclosed CVEs
+    # even when no code changes have been pushed
+    - cron: "0 8 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze Code (${{ matrix.language }})
+    runs-on: ubuntu-latest
+
+    # Required permissions for CodeQL to read code and write results
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required to upload findings to Security tab
+
+    strategy:
+      fail-fast: false         # If one language scan fails, others still run
+      matrix:
+        language:
+          - python
+          # Add more languages here if your repos use them, e.g.:
+          # - javascript
+          # - go
+
+    steps:
+      # ── Step 1: Check out the repository ──────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Step 2: Initialize CodeQL ──────────────────────────────────────
+      # Sets up the CodeQL tools and selects the security query suite.
+      # 'security-extended' catches more than the default suite —
+      # recommended for security-focused repos.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+          # Optional: add custom query packs here in the future, e.g.:
+          # packs: codeql/python-queries
+
+      # ── Step 3: Auto-build (for compiled languages) ───────────────────
+      # For Python this is effectively a no-op, but kept here so this
+      # workflow is portable to compiled languages without modification.
+      - name: Auto-build
+        uses: github/codeql-action/autobuild@v3
+
+      # ── Step 4: Run the analysis ──────────────────────────────────────
+      # Results are uploaded to the Security tab automatically.
+      # SARIF output is also retained as a workflow artifact.
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          output: codeql-results
+          upload: always
+
+      # ── Step 5: Upload SARIF results as artifact ──────────────────────
+      # Retains the raw SARIF file for 30 days so you can download,
+      # diff, or import results into other tools (e.g., Semgrep, Defect Dojo).
+      - name: Upload SARIF results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif-${{ matrix.language }}
+          path: codeql-results
+          retention-days: 30
