@@ -44,7 +44,7 @@ jobs:
     steps:
       # ── Step 1: Check out the repository ──────────────────────────────
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # ── Step 2: Initialize CodeQL ──────────────────────────────────────
       # Sets up the CodeQL tools and selects the security query suite.
