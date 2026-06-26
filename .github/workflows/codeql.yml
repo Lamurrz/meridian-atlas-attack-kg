@@ -51,7 +51,7 @@ jobs:
       # 'security-extended' catches more than the default suite —
       # recommended for security-focused repos.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
@@ -62,13 +62,13 @@ jobs:
       # For Python this is effectively a no-op, but kept here so this
       # workflow is portable to compiled languages without modification.
       - name: Auto-build
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       # ── Step 4: Run the analysis ──────────────────────────────────────
       # Results are uploaded to the Security tab automatically.
       # SARIF output is also retained as a workflow artifact.
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
           output: codeql-results
