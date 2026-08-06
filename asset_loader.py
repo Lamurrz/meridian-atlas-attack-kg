@@ -232,7 +232,7 @@ class AssetLoader:
             return {"nodes": 0, "edges": 0}
 
         asset_dicts = [r.to_dict() for r in records]
-        nodes = self._batch_run(UPSERT_ASSET_PLAIN, asset_dicts)
+        nodes = self._batch_run(UPSERT_ASSET, asset_dicts)
         log.info(f"Upserted {nodes} asset nodes")
 
         # Build PART_OF edges for assets that declare a pipeline_id
