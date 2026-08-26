@@ -4,6 +4,8 @@ A knowledge graph system for evaluating AI system exposure to adversarial threat
 
 Built to support dynamic risk prioritization of AI assets — answering the question: *given your deployed AI systems and the current threat landscape, which assets are most exposed, to whom, and through what attack paths?*
 
+The graph models the full threat surface of deployed agentic AI systems, including **indirect prompt injection** (AML.T0051), **tool misuse** (AML.T0040), **privilege escalation** (T1078, AML.T0043), **goal hijacking** (AML.T0031), and **cross-context data leakage** (AML.T0024) — scored quantitatively against specific asset types (InferenceAPI, AIModel, TrainingData, ModelRegistry, MLPipeline) using a parallel failure mode risk model.
+
 ---
 
 ## Architecture overview
